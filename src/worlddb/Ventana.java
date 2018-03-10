@@ -1,7 +1,7 @@
 package worlddb;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.event.*;
 import java.awt.Font;
 import java.awt.Toolkit;
 import javax.swing.*;
@@ -13,8 +13,11 @@ public class Ventana extends JFrame{
 	private int anchoPantalla = pantalla.getSize().width;
 	private int altoPantalla = pantalla.getSize().height;
 	private ImageIcon icon;
+        public static String query;
 	
 	public Ventana() {
+            
+                query = "Hello";
 		
 		setSize(500,500);
 		
@@ -30,7 +33,7 @@ public class Ventana extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setResizable(false);
-		
+                		
 		setVisible(true);
 	}
 
@@ -42,9 +45,10 @@ class PanelVentana extends JPanel{
 	
 	private JLabel consulta = new JLabel("Consulta");
 	private JComboBox tablasbd = new JComboBox(items);
-	private JButton parametros = new JButton("Par�metros");
+	private JButton parametros = new JButton("Parámetros");
 	private JTable tabla = new JTable();
 	private JButton limpiar = new JButton("Limpiar");
+        private Parametros ventanaParametros;
 	
 	public PanelVentana() {
 		
@@ -69,6 +73,12 @@ class PanelVentana extends JPanel{
 		limpiar.setFont(new Font("Arial", Font.PLAIN, 12));
 		limpiar.setBounds(320,430,150,30);
 		add(limpiar);
+                
+                parametros.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                        ventanaParametros = new Parametros(tablasbd.getSelectedItem().toString().equals("Ciudad") ? "city" : "country");
+                    }
+                });
 	
 	}
 	

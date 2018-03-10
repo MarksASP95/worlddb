@@ -1,2 +1,0 @@
-worlddb.PanelVentana
-worlddb.Ventana

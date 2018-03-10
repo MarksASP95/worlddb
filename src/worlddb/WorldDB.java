@@ -4,7 +4,9 @@ import javax.swing.UIManager;
 
 
 public class WorldDB {
-	
+
+        public static Ventana inicio;
+    
 	public static void main(String[] args) {
 		
 		try {
@@ -13,10 +15,8 @@ public class WorldDB {
 			System.out.println(e.getMessage());
 		}
 		
-		//Ventana inicio = new Ventana();
-		
-		Parametros prueba = new Parametros("country");
-		
+		inicio = new Ventana();
+
 	}
 
 }
