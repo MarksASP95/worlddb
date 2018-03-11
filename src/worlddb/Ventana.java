@@ -1,10 +1,14 @@
 package worlddb;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.awt.Font;
 import java.awt.Toolkit;
 import javax.swing.*;
+import javax.swing.table.JTableHeader;
+import java.sql.*;
 
 public class Ventana extends JFrame{
 	
@@ -16,8 +20,6 @@ public class Ventana extends JFrame{
         public static String query;
 	
 	public Ventana() {
-            
-                query = "Hello";
 		
 		setSize(500,500);
 		
@@ -42,14 +44,98 @@ public class Ventana extends JFrame{
 class PanelVentana extends JPanel{
 	
 	private String[] items = {"Pais", "Ciudad"};
-	
+
 	private JLabel consulta = new JLabel("Consulta");
 	private JComboBox tablasbd = new JComboBox(items);
 	private JButton parametros = new JButton("Parámetros");
-	private JTable tabla = new JTable();
-	private JButton limpiar = new JButton("Limpiar");
-        private Parametros ventanaParametros;
 	
+        private JButton consultar = new JButton("Consultar");
+        private Parametros ventanaParametros;
+
+        private class PanelTabla extends JPanel{
+            
+            private String[] columnasPais = {"Name","Continent","Region","Population"};
+            private String[] columnasCiudad = {"Name","District","Population"};
+            
+            private String[] columnas;
+            
+            private ResultSet setResultados;
+
+            private String[][] data;
+                     
+            public PanelTabla(){
+                
+                setLayout(new BorderLayout());
+                
+                Consultar listenConsulta = new Consultar();
+                
+                consultar.addActionListener(listenConsulta);
+                
+            }
+            
+            private class Consultar implements ActionListener{
+                
+                public void actionPerformed(ActionEvent evt){
+                    
+                    try{
+                        
+                        setResultados = WorldDB.stmt.executeQuery(Ventana.query);
+                        data = prepararData(setResultados);
+   
+                    }
+                    catch(Exception e){System.out.println(e.getStackTrace());}
+                                            
+                        removeAll();
+                        
+                        JTable nuevaTabla = new JTable(data, columnas);
+                        
+                        JScrollPane pane = new JScrollPane(nuevaTabla);
+                        
+                        JTableHeader header = nuevaTabla.getTableHeader();
+                        header.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+                        header.setFont(new Font("Arial", Font.BOLD, 12));
+
+                        nuevaTabla.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+
+                        add(pane, BorderLayout.CENTER);
+                        
+                        repaint();
+                        revalidate();
+                    
+                }
+                
+            }
+                        
+            public String[][] prepararData(ResultSet rs) throws SQLException{
+                
+                rs.last();
+                int numeroFilas = rs.getRow();
+                rs.beforeFirst();
+                
+                int numeroColumnas = (tablasbd.getSelectedItem().toString().equals("Ciudad") ? 3 : 4);
+                columnas = (tablasbd.getSelectedItem().toString().equals("Ciudad") ? columnasCiudad : columnasPais);
+
+                String data[][] = new String[numeroFilas][numeroColumnas];
+
+                int i = 0;
+                
+                while(rs.next()){
+
+                    for (int j = 0; j < columnas.length; j++) {
+                        data[i][j] = rs.getString(columnas[j]);
+                    }
+                    
+                    i++;
+                    
+                }
+                            
+                return data;
+                
+            }
+        }
+        
+        private PanelTabla panelTabla = new PanelTabla();
+        
 	public PanelVentana() {
 		
 		setLayout(null);
@@ -65,14 +151,13 @@ class PanelVentana extends JPanel{
 		parametros.setFont(new Font("Arial", Font.PLAIN, 12));
 		parametros.setBounds(260,65,200,30);
 		add(parametros);
-		
-		tabla.setFont(new Font("Arial", Font.PLAIN, 12));
-		tabla.setBounds(30,115,440,295);
-		add(tabla);
-		
-		limpiar.setFont(new Font("Arial", Font.PLAIN, 12));
-		limpiar.setBounds(320,430,150,30);
-		add(limpiar);
+                
+                panelTabla.setBounds(30,115,440,295);
+                add(panelTabla);
+                                
+                consultar.setFont(new Font("Arial", Font.BOLD, 12));
+                consultar.setBounds(30,430,150,30);
+                add(consultar);
                 
                 parametros.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent e){
@@ -80,7 +165,6 @@ class PanelVentana extends JPanel{
                     }
                 });
 	
-	}
-	
+	}	
 	
 }

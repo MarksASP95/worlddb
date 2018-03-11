@@ -206,8 +206,6 @@ public class Parametros extends JFrame{
                 query = "SELECT * FROM country WHERE Name LIKE '%" + condiciones.get(0) + "%' AND Population " + condiciones.get(1) + Integer.parseInt(condiciones.get(2).toString()) + " AND Continent LIKE '%" + condiciones.get(3) + "%' AND Region LIKE '%" + condiciones.get(4) + "%';";
             }
             
-            System.out.println(query);
-           
             return query;
             
             
